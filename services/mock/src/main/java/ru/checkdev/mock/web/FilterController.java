@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.checkdev.mock.domain.Filter;
+import ru.checkdev.mock.exception.IdNotFoundException;
 import ru.checkdev.mock.service.FilterService;
 
 import java.sql.SQLException;
@@ -30,7 +31,10 @@ public class FilterController {
     public ResponseEntity<Filter> getByUserId(@PathVariable int userId) {
         return filterService.findByUserId(userId).map(
                 value -> new ResponseEntity<>(value, HttpStatus.OK)
-        ).orElseGet(() -> new ResponseEntity<>(new Filter(), HttpStatus.NOT_FOUND));
+        ).orElseGet(() -> {
+            throw new IdNotFoundException("Фильтра с указанным ID не существует.");
+        });
+        /*   new ResponseEntity<>(new Filter(), HttpStatus.NOT_FOUND));*/
     }
 
     @DeleteMapping("/delete/{userId}")

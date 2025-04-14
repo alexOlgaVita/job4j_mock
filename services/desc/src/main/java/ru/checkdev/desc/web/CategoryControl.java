@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ru.checkdev.desc.domain.Category;
+import ru.checkdev.desc.exception.IdNotFoundException;
 import ru.checkdev.desc.service.CategoryService;
 
 @RequestMapping("/category")
@@ -28,7 +29,8 @@ public class CategoryControl {
     public ResponseEntity<Category> findById(@PathVariable int id) {
         var person = categoryService.findById(id);
         if (person.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new IdNotFoundException("Категория с указанным ID не найдена");
+            /* return new ResponseEntity<>(HttpStatus.NOT_FOUND); */
         }
         return new ResponseEntity<>(person.get(), HttpStatus.OK);
     }
