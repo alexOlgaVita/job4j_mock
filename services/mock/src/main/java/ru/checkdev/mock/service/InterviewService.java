@@ -32,7 +32,7 @@ public class InterviewService {
         try {
             rsl = Optional.of(interviewRepository.save(interview));
         } catch (DataIntegrityViolationException e) {
-            LOG.warn(String.format("Duplicate interview: %s",  interview), e);
+            LOG.warn(String.format("Duplicate interview: %s", interview), e);
         }
         return rsl;
     }
@@ -71,6 +71,10 @@ public class InterviewService {
 
     public Page<Interview> findByTopicsIds(List<Integer> topicsIds, int page, int size) {
         return interviewRepository.findByTopicIdIn(topicsIds, PageRequest.of(page, size));
+    }
+
+    public List<Interview> findByStatusAndTopics(int status, List<Integer> topicsIds) {
+        return interviewRepository.findByStatusAndTopicIdIn(status, topicsIds);
     }
 
     public boolean update(Interview interview) {
