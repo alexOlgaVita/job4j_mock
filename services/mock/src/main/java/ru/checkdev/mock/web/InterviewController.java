@@ -7,6 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import ru.checkdev.mock.domain.Interview;
+import ru.checkdev.mock.exception.IdNotFoundException;
 import ru.checkdev.mock.service.InterviewService;
 
 import javax.validation.Valid;
@@ -33,7 +34,10 @@ public class InterviewController {
     public ResponseEntity<Interview> getById(@Valid @PathVariable int id) {
         return interviewService.findById(id)
                 .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseGet(() -> {
+                    throw new IdNotFoundException("Интервью с указанным ID не существует.");
+                });
+                        /* ResponseEntity.notFound().build()); */
     }
 
 
