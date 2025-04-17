@@ -19,6 +19,8 @@ public interface InterviewRepository extends JpaRepository<Interview, Integer> {
 
     List<Interview> findByMode(int mode);
 
+    List<Interview> findByStatusAndTopicIdIn(int statusId, Collection<Integer> topics);
+
     Page<Interview> findByTopicId(int topicId, Pageable pageable);
 
     /**
