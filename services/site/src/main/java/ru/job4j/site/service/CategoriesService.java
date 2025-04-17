@@ -9,10 +9,13 @@ import ru.job4j.site.dto.CategoryDTO;
 
 import java.util.List;
 
+import static ru.job4j.site.domain.StatusInterview.IS_NEW;
+
 @AllArgsConstructor
 @Service
 public class CategoriesService {
     private final TopicsService topicsService;
+    private final InterviewsService interviewsService;
 
     public List<CategoryDTO> getAll() throws JsonProcessingException {
         var text = new RestAuthCall("http://localhost:9902/categories/").get();
@@ -62,7 +65,11 @@ public class CategoriesService {
     public List<CategoryDTO> getMostPopular() throws JsonProcessingException {
         var categoriesDTO = getPopularFromDesc();
         for (var categoryDTO : categoriesDTO) {
-            categoryDTO.setTopicsSize(topicsService.getByCategory(categoryDTO.getId()).size());
+            var topics = topicsService.getByCategory(categoryDTO.getId());
+            categoryDTO.setTopicsSize(topics.size());
+            var newInterviews = interviewsService.findByStatusAndTopics(IS_NEW.getId(),
+                    topics.stream().map(e -> e.getId()).toList());
+            categoryDTO.setNewInterviewSize(newInterviews.size());
         }
         return categoriesDTO;
     }

@@ -71,4 +71,15 @@ public class InterviewsService {
         }
         return builder.toString();
     }
+
+    public List<InterviewDTO> findByStatusAndTopics(int statusId, List<Integer> topicIds) throws JsonProcessingException {
+        var tids = parseIdsListToString(topicIds);
+        var text =
+                new RestAuthCall(String
+                        .format("http://localhost:9912/interviews/findByStatus/%s/findByTopics/%s",
+                                statusId, tids)).get();
+        var mapper = new ObjectMapper();
+        return mapper.readValue(text, new TypeReference<>() {
+        });
+    }
 }
