@@ -5,6 +5,7 @@ package ru.checkdev.notification.service;
 
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import ru.checkdev.notification.config.MailConfiguration;
 import ru.checkdev.notification.domain.Notify;
@@ -59,6 +60,7 @@ public class TemplateService {
         return true;
     }
 
+    @KafkaListener(topics = "${topic.notification}")
     public Notify send(Notify notify) {
         Template template = this.templates.findByType(notify.getTemplate());
         SimpleGenerator generator = new SimpleGenerator();
