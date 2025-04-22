@@ -1,8 +1,7 @@
-package ru.checkdev.notification.domain;
+package ru.checkdev.auth.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.Calendar;
 import java.util.List;
@@ -15,7 +14,6 @@ import java.util.List;
  */
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 public class PersonDTO {
     private String email;
     private String password;
@@ -23,12 +21,4 @@ public class PersonDTO {
     private List<RoleDTO> roles;
     private Calendar created;
     private String username;
-
-    public PersonDTO(String email, String password, boolean privacy, List<RoleDTO> roles, Calendar created) {
-        this.email = email;
-        this.password = password;
-        this.privacy = privacy;
-        this.roles = roles;
-        this.created = created;
-    }
 }

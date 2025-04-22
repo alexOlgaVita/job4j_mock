@@ -20,9 +20,13 @@ public interface PersonRepository extends CrudRepository<Profile, Integer> {
 
     Profile findByEmail(String email);
 
+    Profile findByUsername(String username);
+
     Profile findByEmailAndUsername(String email, String username);
 
     Profile findByKey(String key);
+
+    void deleteById(int id);
 
     List<Profile> findByKeyIn(List<String> key);
 

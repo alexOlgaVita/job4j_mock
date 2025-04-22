@@ -93,4 +93,35 @@ class TgAuthCallWebClintTest {
         PersonDTO actual = (PersonDTO) objectMono.block();
         assertThat(actual).isEqualTo(personDto);
     }
+
+    @Test
+    void whenDoDeleteThenDeleted() {
+        var created = new Calendar.Builder()
+                .set(Calendar.DAY_OF_MONTH, 23)
+                .set(Calendar.MONTH, Calendar.OCTOBER)
+                .set(Calendar.YEAR, 2023)
+                .build();
+        var password = "password";
+        var username = "testUser";
+        var personDto = new PersonDTO("mail", password, true, Collections.EMPTY_LIST, created, username);
+        when(webClientMock.delete()).thenReturn(requestHeadersUriMock);
+        when(requestHeadersUriMock.uri("/person/" + username + "/" + password)).thenReturn(requestHeadersMock);
+        when(requestHeadersMock.retrieve()).thenReturn(responseMock);
+        when(responseMock.bodyToMono(Object.class)).thenReturn(Mono.just(personDto));
+        var actual = tgAuthCallWebClint.doDelete("/person/" + username + "/" + password).block();
+        assertThat(actual).isEqualTo(personDto);
+    }
+
+    @Test
+    void whenDoDeleteThenReturnExceptionError() {
+        var password = "password";
+        var username = "testUser";
+        when(webClientMock.delete()).thenReturn(requestHeadersUriMock);
+        when(requestHeadersUriMock.uri(username + "testUser" + "/" + password)).thenReturn(requestHeadersMock);
+        when(requestHeadersMock.retrieve()).thenReturn(responseMock);
+        when(responseMock.bodyToMono(Object.class)).thenReturn(Mono.error(new Throwable("Error")));
+        assertThatThrownBy(() -> tgAuthCallWebClint.doDelete(username + "testUser" + "/" + password).block())
+                .isInstanceOf(Throwable.class)
+                .hasMessageContaining("Error");
+    }
 }

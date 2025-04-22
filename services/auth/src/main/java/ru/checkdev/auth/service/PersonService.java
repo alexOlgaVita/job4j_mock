@@ -107,6 +107,19 @@ public class PersonService {
         return result;
     }
 
+    public Optional<Profile> findByLoginAndPassword(String login, String password) {
+        Profile profile = this.persons.findByUsername(login);
+        if (profile == null) {
+            return Optional.empty();
+        }
+        if (!this.encoding.matches(password, profile.getPassword())) {
+            System.out.println("Пароль не соответствует");
+            log.error("Введенный пароль {} не соответствует сохраненному ранее для этого логина", password);
+            return Optional.empty();
+        }
+        return Optional.of(profile);
+    }
+
     public List<Profile> getAll() {
         return Lists.newArrayList(persons.findAll());
     }
@@ -154,6 +167,11 @@ public class PersonService {
 
     public Profile findById(int id) {
         return this.persons.findById(id).get();
+    }
+
+    public boolean deleteById(int id) {
+        this.persons.deleteById(id);
+        return true;
     }
 
     public void save(Profile profile) {

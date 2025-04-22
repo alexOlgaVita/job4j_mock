@@ -55,6 +55,15 @@ public class TgAuthCallWebClint {
                 .doOnError(err -> log.error("API not found: {}", err.getMessage()));
     }
 
+    public Mono<Object> doDelete(String url) {
+        return webClient
+                .delete()
+                .uri(url)
+                .retrieve()
+                .bodyToMono(Object.class)
+                .doOnError(err -> log.error("API not found: {}", err.getMessage()));
+    }
+
     public void setWebClient(WebClient webClient) {
         this.webClient = webClient;
     }
