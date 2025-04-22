@@ -12,6 +12,10 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <docker.db.url.jdbc>${JDBC_URL}</docker.db.url.jdbc>
+        <docker.db.username.jdbc>${JDBC_USERNAME}</docker.db.username.jdbc>
+        <docker.db.password.jdbc>${JDBC_PASSWORD}</docker.db.password.jdbc>
+        <docker.db.driver.jdbc>${JDBC_DRIVER}</docker.db.driver.jdbc>
     </properties>
 
     <parent>
@@ -20,6 +24,52 @@
         <version>2.7.11</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
+
+    <profiles>
+        <profile>
+            <id>test</id>
+            <properties>
+                <!--                <liquibase.changeLogFile>db/dbchangelog.xml</liquibase.changeLogFile>-->
+                <!--                <liquibase.url>jdbc:h2:./testdb;MODE=PostgreSQL;CASE_INSENSITIVE_IDENTIFIERS=TRUE;</liquibase.url>-->
+                <!--                <liquibase.username></liquibase.username>-->
+                <!--                <liquibase.password></liquibase.password>-->
+                <spring.liquibase.change-log>db/dbchangelog.xml</spring.liquibase.change-log>
+                <spring.datasource.url>jdbc:h2:./testdb;MODE=PostgreSQL;CASE_INSENSITIVE_IDENTIFIERS=TRUE;</spring.datasource.url>
+                <spring.datasource.username></spring.datasource.username>
+                <spring.datasource.password></spring.datasource.password>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <id>production</id>
+            <properties>
+                <!--                <liquibase.changeLogFile>db/dbchangelog.xml</liquibase.changeLogFile>-->
+                <!--                <liquibase.url>jdbc:postgresql://127.0.0.1:5432/cd_auth</liquibase.url>-->
+                <!--                <liquibase.username>postgres</liquibase.username>-->
+                <!--                <liquibase.password>password</liquibase.password>-->
+                <spring.liquibase.change-log>classpath:db/db.changelog-master.xml</spring.liquibase.change-log>
+                <spring.datasource.url>jdbc:postgresql://127.0.0.1:5432/cd_mock</spring.datasource.url>
+                <spring.datasource.username>postgres</spring.datasource.username>
+                <spring.datasource.password>password</spring.datasource.password>
+                <spring.datasource.driver-class-name>org.postgresql.Driver</spring.datasource.driver-class-name>
+            </properties>
+        </profile>
+        <profile>
+            <id>docker</id>
+            <properties>
+                <!--                <liquibase.changeLogFile>db/dbchangelog.xml</liquibase.changeLogFile>-->
+                <!--                <liquibase.url>${docker.db.url.jdbc}</liquibase.url>-->
+                <!--                <liquibase.username>${docker.db.username.jdbc}</liquibase.username>-->
+                <!--                <liquibase.password>${docker.db.password.jdbc}</liquibase.password>-->
+                <spring.liquibase.change-log>db/dbchangelog.xml</spring.liquibase.change-log>
+                <spring.datasource.username>${docker.db.username.jdbc}</spring.datasource.username>
+                <spring.datasource.password>${docker.db.password.jdbc}</spring.datasource.password>
+                <spring.datasource.url>${docker.db.url.jdbc}</spring.datasource.url>
+            </properties>
+        </profile>
+    </profiles>
 
     <dependencies>
         <dependency>

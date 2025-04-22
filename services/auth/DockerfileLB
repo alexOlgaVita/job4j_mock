@@ -1,0 +1,9 @@
+FROM maven:3.6.3-openjdk-17
+
+RUN mkdir job4j_auth
+
+WORKDIR job4j_auth
+
+COPY . .
+
+CMD ["mvn", "liquibase:update", "-Pdocker"]
