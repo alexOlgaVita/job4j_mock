@@ -1,12 +1,17 @@
 package ru.checkdev.notification.service;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 import ru.checkdev.notification.domain.Notify;
 
 @Service
+@Slf4j
 public class NotificationService {
 
     private final TemplateService templates;
@@ -20,7 +25,15 @@ public class NotificationService {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    public void put(final Notify notify) {
+    @Retry(name = "tgAuthRetry")
+    @CircuitBreaker(name = "tgAuthCircuitBreaker", fallbackMethod = "fallbackSend")
+    public Mono<Object> put(final Notify notify) {
         kafkaTemplate.send(topic, notify);
+        return null;
+    }
+
+    public Mono<Object> fallbackSend(Notify notify, Throwable throwable) {
+        log.error("sent tо topic-kafka {} failed, fallback triggered: {}", topic, throwable.getMessage());
+        return Mono.empty();
     }
 }
