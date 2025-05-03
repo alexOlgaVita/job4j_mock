@@ -15,6 +15,8 @@
         <module>services/mock</module>
         <module>services/notification</module>
         <module>services/site</module>
+        <module>services/discovery</module>
+        <module>services/cloudconfig</module>
     </modules>
 
     <properties>
