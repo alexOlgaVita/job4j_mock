@@ -1,6 +1,7 @@
 package ru.job4j.site.service;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
@@ -19,6 +20,7 @@ import java.io.*;
  * @since 04.10.2023
  */
 
+@RefreshScope
 @Service
 public class ImageCompressorService implements ImageCompress {
     private final int imageSizePixel;

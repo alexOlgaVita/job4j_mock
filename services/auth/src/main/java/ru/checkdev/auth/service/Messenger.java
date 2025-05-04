@@ -2,6 +2,7 @@ package ru.checkdev.auth.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 import ru.checkdev.auth.domain.Notify;
 
@@ -14,6 +15,8 @@ import java.util.concurrent.ScheduledExecutorService;
  * @version $Id$
  * @since 0.1
  */
+
+@RefreshScope
 @Service
 public class Messenger {
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);

@@ -3,6 +3,7 @@ package ru.checkdev.auth.service;
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 import ru.checkdev.auth.repository.OrderRepository;
 import ru.checkdev.auth.domain.Notify;
@@ -19,6 +20,7 @@ import java.util.Map;
  * mail: mikhail.epatko@gmail.com
  */
 
+@RefreshScope
 @Service
 public class OrderService {
 

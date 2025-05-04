@@ -2,6 +2,7 @@ package ru.checkdev.notification.telegram.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -14,6 +15,7 @@ import ru.checkdev.notification.domain.PersonDTO;
  * @author Dmitry Stepanov, user Dmitry
  * @since 12.09.2023
  */
+@RefreshScope
 @Service
 @Slf4j
 public class TgAuthCallWebClint {
