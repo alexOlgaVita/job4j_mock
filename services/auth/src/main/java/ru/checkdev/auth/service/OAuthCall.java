@@ -24,16 +24,28 @@ public class OAuthCall {
     private static final int RETRIES = 3;
     private static final long DELAY = 1000;
 
+    private static final int FAILURETHRESHOLD = 2;
+
+    private int failureCount = 0;
+    private State state = State.CLOSED;
+
+    private enum State {
+        OPEN,
+        CLOSED,
+    }
+
     static {
         HttpsURLConnection.setDefaultHostnameVerifier((hostname, session) -> true);
     }
 
     public String doGet(Principal user, String url) throws Exception {
-        return this.retryCall(user, "GET", url, null);
+//        return this.retryCall(user, "GET", url, null);
+        return this.retryByCirtuitCall(user, "GET", url, null);
     }
 
     public String doPost(Principal user, String url, String data) throws Exception {
-        return this.retryCall(user, "POST", url, data);
+//        return this.retryCall(user, "POST", url, data);
+        return this.retryByCirtuitCall(user, "POST", url, data);
     }
 
     public interface Act<T> {
@@ -57,6 +69,31 @@ public class OAuthCall {
             }
         } while (i < RETRIES);
         return defVal;
+    }
+
+    public <R> R execCircuit(Act<R> act, R defVal) {
+        if (state == State.CLOSED) {
+            try {
+                return act.exec();
+            } catch (Exception e) {
+                failureCount++;
+                System.out.println("failureCount = " + failureCount);
+                log.error("Attempt failed, failure count: {}", failureCount);
+                if (failureCount >= FAILURETHRESHOLD) {
+                    state = State.OPEN;
+                    log.warn("Circuit Breaker OPENED due to failure threshold exceeded.");
+                    return defVal;
+                }
+            }
+        }
+        log.warn("Circuit Breaker is OPEN. Skipping request.");
+        throw new CircuitBreakerOpenException("Circuit Breaker is OPEN. Request skipped.");
+    }
+
+    public static class CircuitBreakerOpenException extends RuntimeException {
+        public CircuitBreakerOpenException(String message) {
+            super(message);
+        }
     }
 
     private String call(Principal user, String method, String url, String data) throws Exception {
@@ -93,5 +130,15 @@ public class OAuthCall {
         log.info(result);
         return result;
     }
-}
 
+    private String retryByCirtuitCall(Principal user, String method, String url, String data) {
+        Act<String> permitExc = () -> {
+            return call(user, method, url, data);
+        };
+        var result = exec(() -> execCircuit(permitExc, "BS Запрос не был отработан корректно"),
+                "Retry Запрос не был отработан корректно");
+        //var result = exec(permitExc, "Запрос не был отработан корректно");
+        log.info(result);
+        return result;
+    }
+}
