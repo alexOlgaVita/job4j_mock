@@ -3,6 +3,7 @@ package ru.job4j.site.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 import ru.job4j.site.domain.StatusInterview;
 import ru.job4j.site.domain.StatusWisher;
@@ -14,6 +15,7 @@ import ru.job4j.site.dto.WisherDto;
 import java.util.ArrayList;
 import java.util.List;
 
+@RefreshScope
 @Service
 public class InterviewService {
     private static final String URL_MOCK = "http://localhost:9912/interview/";

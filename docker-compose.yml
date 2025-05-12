@@ -1,0 +1,218 @@
+version: "3.9"
+services:
+  db_auth:
+    image: postgres
+    container_name: db_auth
+    environment:
+#      - POSTGRES_PASSWORD=password
+#      - POSTGRES_USER=postgres
+#      - POSTGRES_DB=cd_auth
+#      - PGDATA=/var/lib/postgresql/data
+
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db_auth:5432/cd_auth
+      - SPRING_DATASOURCE_USERNAME=compose-postgres
+      - SPRING_DATASOURCE_PASSWORD=compose-postgres
+    volumes:
+      - ./db/shortcut/data:/var/lib/postgresql/data
+    restart: always
+  lb_auth:
+      build:
+        context: .
+        dockerfile: ./services/auth/DockerfileLB
+      environment:
+        - JDBC_URL=jdbc:postgresql://db_auth:5432/cd_auth
+        - JDBC_USERNAME=postgres
+        - JDBC_PASSWORD=password
+        - JDBC_DRIVER=org.postgresql.Driver
+      container_name: lb_auth
+      depends_on:
+        - db_auth
+  job4j_auth:
+    build:
+      context: .
+      dockerfile: ./services/auth/Dockerfile
+    environment:
+      - JDBC_URL=jdbc:postgresql://db_auth:5432/cd_auth
+      - JDBC_USERNAME=postgres
+      - JDBC_PASSWORD=password
+      - JDBC_DRIVER=org.postgresql.Driver
+    container_name: job4j_auth
+    depends_on:
+      - db_auth
+      - lb_auth
+
+#  db_desc:
+#    image: postgres
+#    container_name: db_desc
+#    environment:
+#      - POSTGRES_PASSWORD=password
+#      - POSTGRES_USER=postgres
+#      - POSTGRES_DB=cd_desc
+#      - PGDATA=/var/lib/postgresql/data
+#
+#      - SPRING_DATASOURCE_URL=jdbc:postgresql://db_desc:5432/cd_desc
+#      - SPRING_DATASOURCE_USERNAME=compose-postgres
+#      - SPRING_DATASOURCE_PASSWORD=compose-postgres
+#    volumes:
+#      - ./db/shortcut/data:/var/lib/postgresql/data
+#    restart: always
+#  lb_desc:
+#    build:
+#      context: .
+#      dockerfile: ./services/desc/DockerfileLB
+#    environment:
+#      - JDBC_URL=jdbc:postgresql://db_desc:5432/cd_desc
+#      - JDBC_USERNAME=postgres
+#      - JDBC_PASSWORD=password
+#      - JDBC_DRIVER=org.postgresql.Driver
+#    container_name: lb_desc
+#    depends_on:
+#      - db_desc
+#  job4j_desc:
+#    build:
+#      context: .
+#      dockerfile: ./services/desc/Dockerfile
+#    environment:
+#      - JDBC_URL=jdbc:postgresql://db_desc:5432/cd_desc
+#      - JDBC_USERNAME=postgres
+#      - JDBC_PASSWORD=password
+#      - JDBC_DRIVER=org.postgresql.Driver
+#    container_name: job4j_desc
+#    depends_on:
+#      - db_desc
+#      - lb_desc
+#
+#  db_mock:
+#    image: postgres
+#    container_name: db_mock
+#    environment:
+#      - POSTGRES_PASSWORD=password
+#      - POSTGRES_USER=postgres
+#      - POSTGRES_DB=cd_desc
+#      - PGDATA=/var/lib/postgresql/data
+#
+#      - SPRING_DATASOURCE_URL=jdbc:postgresql://db_mock:5432/cd_mock
+#      - SPRING_DATASOURCE_USERNAME=compose-postgres
+#      - SPRING_DATASOURCE_PASSWORD=compose-postgres
+#    volumes:
+#      - ./db/shortcut/data:/var/lib/postgresql/data
+#    restart: always
+#  lb_mock:
+#    build:
+#      context: .
+#      dockerfile: ./services/mock/DockerfileLB
+#    environment:
+#      - JDBC_URL=jdbc:postgresql://db_mock:5432/cd_mock
+#      - JDBC_USERNAME=postgres
+#      - JDBC_PASSWORD=password
+#      - JDBC_DRIVER=org.postgresql.Driver
+#    container_name: lb_mock
+#    depends_on:
+#      - db_mock
+#  job4j_mock:
+#    build:
+#      context: .
+#      dockerfile: ./services/mock/Dockerfile
+#    environment:
+#      - JDBC_URL=jdbc:postgresql://db_mock:5432/cd_mock
+#      - JDBC_USERNAME=postgres
+#      - JDBC_PASSWORD=password
+#      - JDBC_DRIVER=org.postgresql.Driver
+#    container_name: job4j_mock
+#    depends_on:
+#      - db_mock
+#      - lb_mock
+#
+#  db_notification:
+#    image: postgres
+#    container_name: db_notification
+#    environment:
+#      - POSTGRES_PASSWORD=password
+#      - POSTGRES_USER=postgres
+#      - POSTGRES_DB=cd_desc
+#      - PGDATA=/var/lib/postgresql/data
+#
+#      - SPRING_DATASOURCE_URL=jdbc:postgresql://db_notification:5432/cd_notification
+#      - SPRING_DATASOURCE_USERNAME=compose-postgres
+#      - SPRING_DATASOURCE_PASSWORD=compose-postgres
+#    volumes:
+#      - ./db/shortcut/data:/var/lib/postgresql/data
+#    restart: always
+#  lb_notification:
+#    build:
+#      context: .
+#      dockerfile: ./services/notification/DockerfileLB
+#    environment:
+#      - JDBC_URL=jdbc:postgresql://db_notification:5432/cd_notification
+#      - JDBC_USERNAME=postgres
+#      - JDBC_PASSWORD=password
+#      - JDBC_DRIVER=org.postgresql.Driver
+#    container_name: lb_notification
+#    depends_on:
+#      - db_notification
+#  job4j_notification:
+#    build:
+#      context: .
+#      dockerfile: ./services/notification/Dockerfile
+#    environment:
+#      - JDBC_URL=jdbc:postgresql://db_notification:5432/cd_notification
+#      - JDBC_USERNAME=postgres
+#      - JDBC_PASSWORD=password
+#      - JDBC_DRIVER=org.postgresql.Driver
+#    container_name: job4j_notification
+#    depends_on:
+#      - db_notification
+#      - lb_notification
+#
+#  db_site:
+#    image: postgres
+#    container_name: db_site
+#    environment:
+#      - POSTGRES_PASSWORD=password
+#      - POSTGRES_USER=postgres
+#      - POSTGRES_DB=cd_desc
+#      - PGDATA=/var/lib/postgresql/data
+#
+#      - SPRING_DATASOURCE_URL=jdbc:postgresql://db_site:5432/cd_site
+#      - SPRING_DATASOURCE_USERNAME=compose-postgres
+#      - SPRING_DATASOURCE_PASSWORD=compose-postgres
+#    volumes:
+#      - ./db/shortcut/data:/var/lib/postgresql/data
+#    restart: always
+#  lb_site:
+#    build:
+#      context: .
+#      dockerfile: ./services/site/DockerfileLB
+#    environment:
+#      - JDBC_URL=jdbc:postgresql://db_site:5432/cd_site
+#      - JDBC_USERNAME=postgres
+#      - JDBC_PASSWORD=password
+#      - JDBC_DRIVER=org.postgresql.Driver
+#    container_name: lb_site
+#    depends_on:
+#      - db_site
+#  job4j_site:
+#    build:
+#      context: .
+#      dockerfile: ./services/site/Dockerfile
+#    environment:
+#      - JDBC_URL=jdbc:postgresql://db_site:5432/cd_site
+#      - JDBC_USERNAME=postgres
+#      - JDBC_PASSWORD=password
+#      - JDBC_DRIVER=org.postgresql.Driver
+#    container_name: job4j_site
+#    depends_on:
+#      - db_site
+#      - lb_site
+
+  job4j_mock_main:
+    build:
+      context: .
+    container_name: job4j_mock_main
+    depends_on:
+      - job4j_auth
+#      - job4j_desc
+#      - job4j_mock
+#      - job4j_notification
+#      - job4j_site
+

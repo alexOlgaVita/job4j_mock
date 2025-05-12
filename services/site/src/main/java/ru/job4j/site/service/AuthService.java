@@ -4,11 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Service;
 import ru.job4j.site.dto.UserInfoDTO;
 
 import java.util.Map;
 
+@RefreshScope
 @Service
 @Slf4j
 public class AuthService {

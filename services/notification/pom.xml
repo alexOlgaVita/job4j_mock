@@ -11,6 +11,11 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <docker.db.url.jdbc>${JDBC_URL}</docker.db.url.jdbc>
+        <docker.db.username.jdbc>${JDBC_USERNAME}</docker.db.username.jdbc>
+        <docker.db.password.jdbc>${JDBC_PASSWORD}</docker.db.password.jdbc>
+        <docker.db.driver.jdbc>${JDBC_DRIVER}</docker.db.driver.jdbc>
+        <spring-cloud.version>2021.0.6</spring-cloud.version>
     </properties>
 
     <parent>
@@ -60,8 +65,16 @@
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
@@ -158,11 +171,22 @@
             <artifactId>spring-kafka</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.github.resilience4j</groupId>
-            <artifactId>resilience4j-spring-boot2</artifactId>
-            <version>1.7.0</version>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-config</artifactId>
         </dependency>
     </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <build>
         <plugins>

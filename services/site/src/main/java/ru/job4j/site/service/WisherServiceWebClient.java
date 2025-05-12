@@ -2,6 +2,7 @@ package ru.job4j.site.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,6 +24,7 @@ import java.util.*;
  * @author Dmitry Stepanov, user Dmitry
  * @since 11.10.2023
  */
+@RefreshScope
 @Service
 @Slf4j
 public class WisherServiceWebClient implements WisherService {

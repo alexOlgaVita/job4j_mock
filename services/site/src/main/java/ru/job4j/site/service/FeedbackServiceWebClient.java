@@ -2,6 +2,7 @@ package ru.job4j.site.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ import java.util.Optional;
  * @author Dmitry Stepanov, user Dmitry
  * @since 25.10.2023
  */
+@RefreshScope
 @Service
 @Slf4j
 public class FeedbackServiceWebClient implements FeedbackService {

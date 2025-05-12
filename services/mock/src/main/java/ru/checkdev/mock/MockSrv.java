@@ -2,13 +2,16 @@ package ru.checkdev.mock;
 
 import liquibase.integration.spring.SpringLiquibase;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.freemarker.FreeMarkerAutoConfiguration;
 import org.springframework.boot.context.ApplicationPidFileWriter;
 import org.springframework.context.annotation.Bean;
 
 import javax.sql.DataSource;
 
 @SpringBootApplication
+@EnableAutoConfiguration(exclude = { FreeMarkerAutoConfiguration.class })
 public class MockSrv {
     public static void main(String[] args) {
         SpringApplication application = new SpringApplication(MockSrv.class);
