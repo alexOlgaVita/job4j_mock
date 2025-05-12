@@ -1,14 +1,17 @@
 package ru.checkdev.notification.service;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 import ru.checkdev.notification.domain.Notify;
 
-@Slf4j
 @Service
+@Slf4j
 public class NotificationService {
 
     private final TemplateService templates;
@@ -16,46 +19,21 @@ public class NotificationService {
     @Value("${topic.notification}")
     private String topic;
 
-    @Value("${retries.notification}")
-    private int retries;
-
-    @Value("${delay.notification}")
-    private long delay;
-
     @Autowired
     public NotificationService(final TemplateService templates, KafkaTemplate<String, Object> kafkaTemplate) {
         this.templates = templates;
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    public interface Act<T> {
-        T exec() throws Exception;
+    @Retry(name = "tgAuthRetry")
+    @CircuitBreaker(name = "tgAuthCircuitBreaker", fallbackMethod = "fallbackSend")
+    public Mono<Object> put(final Notify notify) {
+        kafkaTemplate.send(topic, notify);
+        return null;
     }
 
-    public <R> R exec(Act<R> act, R defVal) {
-        int i = 0;
-        do {
-            i++;
-            try {
-                return act.exec();
-            } catch (Exception e) {
-                log.error("Attempt {} failed: {}", i, e.getMessage(), e);
-                try {
-                    Thread.sleep(delay);
-                } catch (InterruptedException ie) {
-                    Thread.currentThread().interrupt();
-                    log.error("Thread interrupted during sleep", ie);
-                }
-            }
-        } while (i < retries);
-        return defVal;
-    }
-
-    public void put(final Notify notify) {
-        Act<String> permitExc = () -> {
-            kafkaTemplate.send(topic, notify);
-            return "Notify was sent";
-        };
-        log.info(exec(permitExc, "Notify was not sent"));
+    public Mono<Object> fallbackSend(Notify notify, Throwable throwable) {
+        log.error("sent tо topic-kafka {} failed, fallback triggered: {}", topic, throwable.getMessage());
+        return Mono.empty();
     }
 }
