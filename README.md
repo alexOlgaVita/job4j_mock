@@ -203,4 +203,11 @@ Smoke-тесты:
 - Mock сервис - http://localhost:9912/swagger-ui/index.html
 - Notification сервис - http://localhost:9920/swagger-ui/index.html
 
+#### Сборка проекта
+1. Подключен Spring Cloud Config, в который вынесены все настройки основных сервисов, чтобы сервисы общались с ним.
+2. Добавлен Spring Discovery - чтобы сервисы могли друг друга находить через него.
+для выполнения модульных тестов без Cloud Config везде в application.properties (в test/resources) нужно:
+spring.cloud.config.enabled=false
+   ![Alt](images/eureka.jpg)
+
 ___
